@@ -4,6 +4,7 @@ import 'package:bmi_calc/domain/Brain.dart';
 import 'package:flutter/material.dart';
 
 import '../buttons/BottomButton.dart';
+import '../buttons/RoundIconButton.dart';
 import 'AgeWeightSquer.dart';
 import 'ResultPage.dart';
 
@@ -15,12 +16,9 @@ class BMICalcPage extends StatefulWidget {
 }
 
 class _BMICalcPageState extends State<BMICalcPage> {
-
-
-  double currentSliderValue = 170;
   final _weightController = TextEditingController();
   final _ageController = TextEditingController();
-
+  double currentSliderValue = 170;
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
@@ -50,70 +48,66 @@ class _BMICalcPageState extends State<BMICalcPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AgeOrWeight(
-                title: "Alter",
-                lableText: "In Jahren",
-                controller: _ageController,
-                onPressedMinus: () {
-                  if (_ageController.text == ""|| int.parse(_ageController.text)<1) {
-                    _ageController.text = "1";
-                  } else {
-                    int _age;
-                    _age = int.parse(_ageController.text);
-                    setState(() {
-                      _age--;
-                      _ageController.text = _age.toString();
-                    });
-                  }
-
-                },
-                onPressedPlus: () {
-                  if (_ageController.text == "") {
-                    _ageController.text = "1";
-                  } else {
-                    int _age;
-                    _age = int.parse(_ageController.text);
-                    setState(() {
-                      _age++;
-                      _ageController.text = _age.toString();
-                    });
-                  }
-
-                }
-              ),
+                  title: "Alter",
+                  lableText: "In Jahren",
+                  controller: _ageController,
+                  onPressedMinus: () {
+                    if (_ageController.text == "" ||
+                        int.parse(_ageController.text) < 1) {
+                      _ageController.text = "1";
+                    } else {
+                      int age;
+                      age = int.parse(_ageController.text);
+                      setState(() {
+                        age--;
+                        _ageController.text = age.toString();
+                      });
+                    }
+                  },
+                  onPressedPlus: () {
+                    if (_ageController.text == "") {
+                      _ageController.text = "1";
+                    } else {
+                      int age;
+                      age = int.parse(_ageController.text);
+                      setState(() {
+                        age++;
+                        _ageController.text = age.toString();
+                      });
+                    }
+                  }),
               const SizedBox(
                 width: 10,
               ),
               AgeOrWeight(
-                title: "Gewicht",
-                lableText: "In Kg",
-                controller: _weightController,
+                  title: "Gewicht",
+                  lableText: "In Kg",
+                  controller: _weightController,
                   onPressedMinus: () {
-                    if (_weightController.text == ""|| int.parse(_weightController.text)<1) {
+                    if (_weightController.text == "" ||
+                        int.parse(_weightController.text) < 1) {
                       _weightController.text = "1";
                     } else {
-                      int _weight;
-                      _weight = int.parse(_weightController.text);
+                      int weight;
+                      weight = int.parse(_weightController.text);
                       setState(() {
-                        _weight--;
-                        _weightController.text = _weight.toString();
+                        weight--;
+                        _weightController.text = weight.toString();
                       });
                     }
-
                   },
                   onPressedPlus: () {
                     if (_weightController.text == "") {
                       _weightController.text = "1";
                     } else {
-                      int _weight;
-                      _weight = int.parse(_weightController.text);
+                      int weight;
+                      weight = int.parse(_weightController.text);
                       setState(() {
-                        _weight++;
-                        _weightController.text = _weight.toString();
+                        weight++;
+                        _weightController.text = weight.toString();
                       });
                     }
-
-                  }
-              ),
+                  }),
             ],
           ),
         ),
@@ -122,7 +116,7 @@ class _BMICalcPageState extends State<BMICalcPage> {
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Material(
+          child:Material(
             elevation: 15,
             borderRadius: BorderRadius.circular((15)),
             child: Container(
@@ -144,22 +138,43 @@ class _BMICalcPageState extends State<BMICalcPage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  Text(
-                    currentSliderValue.toStringAsFixed(0),
-                    style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.w500),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      RoundIconButton(
+                          icon: Icons.remove,
+                          onPressed: () {
+                            setState(() {
+                              currentSliderValue--;
+                            });
+                          }),
+                      const SizedBox(
+                        width: 50,
+                      ),
+                      Text(
+                        currentSliderValue.toStringAsFixed(0),
+                        style: const TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(
+                        width: 50,
+                      ),
+                      RoundIconButton(icon: Icons.add, onPressed: () {                 setState(() {
+                        currentSliderValue++;
+                      });})
+                    ],
                   ),
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
                       inactiveTrackColor: const Color(0xFF8D8E98),
                       activeTrackColor: Colors.white,
                       thumbColor: themeData.colorScheme.secondary,
-                      overlayColor: const Color.fromRGBO(
-                          61, 126, 126, 0.2196078431372549),
+                      overlayColor:
+                      const Color.fromRGBO(61, 126, 126, 0.2196078431372549),
                       thumbShape:
-                          const RoundSliderThumbShape(enabledThumbRadius: 15.0),
+                      const RoundSliderThumbShape(enabledThumbRadius: 15.0),
                       overlayShape:
-                          const RoundSliderOverlayShape(overlayRadius: 30.0),
+                      const RoundSliderOverlayShape(overlayRadius: 30.0),
                     ),
                     child: Slider(
                       min: 60,
@@ -191,6 +206,7 @@ class _BMICalcPageState extends State<BMICalcPage> {
                     _ageController.text == null) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       backgroundColor: Colors.redAccent,
+                      duration: Duration(milliseconds: 1400),
                       content: Text(
                         "Fehler: Fülle alle Felder aus",
                         style: themeData.textTheme.bodyText1,
