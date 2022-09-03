@@ -19,6 +19,7 @@ class _BMICalcPageState extends State<BMICalcPage> {
   final _weightController = TextEditingController();
   final _ageController = TextEditingController();
   double currentSliderValue = 170;
+
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
@@ -52,9 +53,17 @@ class _BMICalcPageState extends State<BMICalcPage> {
                   lableText: "In Jahren",
                   controller: _ageController,
                   onPressedMinus: () {
-                    if (_ageController.text == "" ||
-                        int.parse(_ageController.text) < 1) {
-                      _ageController.text = "1";
+                    if (_ageController.text == "") {
+                      _ageController.text = "0";
+                    } else if (int.parse(_ageController.text) <= 0) {
+                      _ageController.text = "0";
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          backgroundColor: Colors.redAccent,
+                          duration: Duration(milliseconds: 1600),
+                          content: Text(
+                            "Fehler: Alter kann nicht negativ sein",
+                            style: themeData.textTheme.bodyText1,
+                          )));
                     } else {
                       int age;
                       age = int.parse(_ageController.text);
@@ -116,7 +125,7 @@ class _BMICalcPageState extends State<BMICalcPage> {
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child:Material(
+          child: Material(
             elevation: 15,
             borderRadius: BorderRadius.circular((15)),
             child: Container(
@@ -144,9 +153,15 @@ class _BMICalcPageState extends State<BMICalcPage> {
                       RoundIconButton(
                           icon: Icons.remove,
                           onPressed: () {
-                            setState(() {
-                              currentSliderValue--;
-                            });
+                            if (currentSliderValue >= 61) {
+                              setState(() {
+                                currentSliderValue--;
+                              });
+                            } else {
+                              setState(() {
+                                currentSliderValue = 60;
+                              });
+                            }
                           }),
                       const SizedBox(
                         width: 50,
@@ -159,9 +174,20 @@ class _BMICalcPageState extends State<BMICalcPage> {
                       const SizedBox(
                         width: 50,
                       ),
-                      RoundIconButton(icon: Icons.add, onPressed: () {                 setState(() {
-                        currentSliderValue++;
-                      });})
+                      RoundIconButton(
+                          icon: Icons.add,
+                          onPressed: () {
+                            if (currentSliderValue <= 239) {
+                              setState(() {
+                                currentSliderValue++;
+                              });
+                            } else {
+                              setState(() {
+                                currentSliderValue = 240;
+                              });
+                            }
+
+                          })
                     ],
                   ),
                   SliderTheme(
@@ -169,16 +195,16 @@ class _BMICalcPageState extends State<BMICalcPage> {
                       inactiveTrackColor: const Color(0xFF8D8E98),
                       activeTrackColor: Colors.white,
                       thumbColor: themeData.colorScheme.secondary,
-                      overlayColor:
-                      const Color.fromRGBO(61, 126, 126, 0.2196078431372549),
+                      overlayColor: const Color.fromRGBO(
+                          61, 126, 126, 0.2196078431372549),
                       thumbShape:
-                      const RoundSliderThumbShape(enabledThumbRadius: 15.0),
+                          const RoundSliderThumbShape(enabledThumbRadius: 15.0),
                       overlayShape:
-                      const RoundSliderOverlayShape(overlayRadius: 30.0),
+                          const RoundSliderOverlayShape(overlayRadius: 30.0),
                     ),
                     child: Slider(
                       min: 60,
-                      max: 230,
+                      max: 240,
                       value: currentSliderValue,
                       onChanged: (double v) {
                         setState(() {
@@ -206,7 +232,7 @@ class _BMICalcPageState extends State<BMICalcPage> {
                     _ageController.text == null) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       backgroundColor: Colors.redAccent,
-                      duration: Duration(milliseconds: 1400),
+                      duration: Duration(milliseconds: 1600),
                       content: Text(
                         "Fehler: Fülle alle Felder aus",
                         style: themeData.textTheme.bodyText1,
