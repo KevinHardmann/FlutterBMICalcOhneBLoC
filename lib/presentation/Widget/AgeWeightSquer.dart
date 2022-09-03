@@ -8,12 +8,14 @@ class AgeOrWeight extends StatelessWidget {
     Key? key,
     required this.title,
     required this.lableText,
-    required this.controller,
+    required this.controller, required this.onPressedMinus, required this.onPressedPlus,
   }) : super(key: key);
 
   final String title;
   final String lableText;
   final TextEditingController? controller;
+  final Function onPressedMinus;
+  final Function onPressedPlus;
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +45,10 @@ class AgeOrWeight extends StatelessWidget {
                 child: SizedBox(
                   width: 120,
                   child: TextFormField(
+
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(3),
+                      FilteringTextInputFormatter.allow(RegExp(r'^[1-9][0-9]*')),
                     ],
                     textAlign: TextAlign.center,
                     keyboardType: TextInputType.number,
@@ -64,11 +68,11 @@ class AgeOrWeight extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  RoundIconButton(icon: Icons.remove, onPressed: () {}),
+                  RoundIconButton(icon: Icons.remove, onPressed: ()=>onPressedMinus()),
                   const SizedBox(
                     width: 20,
                   ),
-                  RoundIconButton(icon: Icons.add, onPressed: () {}),
+                  RoundIconButton(icon: Icons.add, onPressed: ()=>onPressedPlus()),
                 ],
               ),
             ],

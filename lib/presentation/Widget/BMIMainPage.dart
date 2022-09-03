@@ -1,14 +1,11 @@
 import 'dart:ffi';
 
-
 import 'package:bmi_calc/domain/Brain.dart';
 import 'package:flutter/material.dart';
 
 import '../buttons/BottomButton.dart';
 import 'AgeWeightSquer.dart';
 import 'ResultPage.dart';
-
-
 
 class BMICalcPage extends StatefulWidget {
   const BMICalcPage({Key? key}) : super(key: key);
@@ -19,10 +16,11 @@ class BMICalcPage extends StatefulWidget {
 
 class _BMICalcPageState extends State<BMICalcPage> {
 
-  double currentSliderValue = 170;
 
+  double currentSliderValue = 170;
   final _weightController = TextEditingController();
   final _ageController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
@@ -50,10 +48,72 @@ class _BMICalcPageState extends State<BMICalcPage> {
           padding: const EdgeInsets.all(8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children:  [
-               AgeOrWeight(title: "Alter", lableText: "In Jahren", controller: _ageController,),
-              const SizedBox(width: 10,),
-              AgeOrWeight(title: "Gewicht", lableText: "In Kg", controller: _weightController,),
+            children: [
+              AgeOrWeight(
+                title: "Alter",
+                lableText: "In Jahren",
+                controller: _ageController,
+                onPressedMinus: () {
+                  if (_ageController.text == ""|| int.parse(_ageController.text)<1) {
+                    _ageController.text = "1";
+                  } else {
+                    int _age;
+                    _age = int.parse(_ageController.text);
+                    setState(() {
+                      _age--;
+                      _ageController.text = _age.toString();
+                    });
+                  }
+
+                },
+                onPressedPlus: () {
+                  if (_ageController.text == "") {
+                    _ageController.text = "1";
+                  } else {
+                    int _age;
+                    _age = int.parse(_ageController.text);
+                    setState(() {
+                      _age++;
+                      _ageController.text = _age.toString();
+                    });
+                  }
+
+                }
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              AgeOrWeight(
+                title: "Gewicht",
+                lableText: "In Kg",
+                controller: _weightController,
+                  onPressedMinus: () {
+                    if (_weightController.text == ""|| int.parse(_weightController.text)<1) {
+                      _weightController.text = "1";
+                    } else {
+                      int _weight;
+                      _weight = int.parse(_weightController.text);
+                      setState(() {
+                        _weight--;
+                        _weightController.text = _weight.toString();
+                      });
+                    }
+
+                  },
+                  onPressedPlus: () {
+                    if (_weightController.text == "") {
+                      _weightController.text = "1";
+                    } else {
+                      int _weight;
+                      _weight = int.parse(_weightController.text);
+                      setState(() {
+                        _weight++;
+                        _weightController.text = _weight.toString();
+                      });
+                    }
+
+                  }
+              ),
             ],
           ),
         ),
@@ -86,16 +146,20 @@ class _BMICalcPageState extends State<BMICalcPage> {
                   ),
                   Text(
                     currentSliderValue.toStringAsFixed(0),
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.w500),
                   ),
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
                       inactiveTrackColor: const Color(0xFF8D8E98),
                       activeTrackColor: Colors.white,
                       thumbColor: themeData.colorScheme.secondary,
-                      overlayColor: const Color.fromRGBO(61, 126, 126, 0.2196078431372549),
-                      thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 15.0),
-                      overlayShape: const RoundSliderOverlayShape(overlayRadius: 30.0),
+                      overlayColor: const Color.fromRGBO(
+                          61, 126, 126, 0.2196078431372549),
+                      thumbShape:
+                          const RoundSliderThumbShape(enabledThumbRadius: 15.0),
+                      overlayShape:
+                          const RoundSliderOverlayShape(overlayRadius: 30.0),
                     ),
                     child: Slider(
                       min: 60,
@@ -118,34 +182,37 @@ class _BMICalcPageState extends State<BMICalcPage> {
         ),
         Padding(
           padding: const EdgeInsets.all(8),
-          child: BottomButton(btnText: "BMI Berechnen", callback: () {
+          child: BottomButton(
+              btnText: "BMI Berechnen",
+              callback: () {
+                if (_weightController.text == "" ||
+                    _weightController.text == null ||
+                    _ageController.text == "" ||
+                    _ageController.text == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      backgroundColor: Colors.redAccent,
+                      content: Text(
+                        "Fehler: Fülle alle Felder aus",
+                        style: themeData.textTheme.bodyText1,
+                      )));
+                } else {
+                  CalcBrain calc = CalcBrain(
+                      height: currentSliderValue,
+                      weight: double.parse(_weightController.text),
+                      age: double.parse(_ageController.text));
 
-            if(_weightController.text==""||_weightController.text==null||_ageController.text==""||_ageController.text==null){
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.redAccent,
-                  content: Text(
-                    "Fehler: Fülle alle Felder aus",
-                    style: themeData.textTheme.bodyText1,
-                  )));
-            }else {
-              CalcBrain calc = CalcBrain(height: currentSliderValue,
-                  weight: double.parse(_weightController.text),
-                  age: double.parse(_ageController.text));
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      ResultsPage(
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ResultsPage(
                         bmiResult: calc.calculateBMI(),
                         resultText: calc.getResult(),
                         interpretation: calc.getInterpration(),
-
                       ),
-                ),
-              );
-            }
-          }),
+                    ),
+                  );
+                }
+              }),
         ),
       ],
     );
